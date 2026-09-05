@@ -1,0 +1,14 @@
+# LLM
+anthropic>=0.40
+
+# Vector store + embeddings (Chroma ships a local MiniLM embedder)
+chromadb>=0.5
+
+# Document loading
+pypdf>=4.0
+
+# Config
+python-dotenv>=1.0
+
+# Dev / test
+pytest>=8.0
