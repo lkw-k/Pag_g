@@ -1,5 +1,5 @@
-# LLM
-anthropic>=0.40
+# LLM (local Ollama server)
+ollama>=0.3
 
 # Vector store + embeddings (Chroma ships a local MiniLM embedder)
 chromadb>=0.5

@@ -24,14 +24,21 @@ pip install -r requirements.txt
 copy .env.example .env         # 이후 .env 값 채우기
 ```
 
+LLM은 로컬 [Ollama](https://ollama.com/)를 사용한다. 서버를 띄우고 모델을 받아둔다.
+
+```bash
+ollama serve
+ollama pull llama3.1
+```
+
 ## 환경변수
 
 `.env.example` 참고. 주요 값:
 
 | 변수 | 설명 |
 | --- | --- |
-| `ANTHROPIC_API_KEY` | Anthropic API 키 |
-| `RAG_MODEL` | 답변 생성에 쓸 Claude 모델 |
+| `OLLAMA_HOST` | 로컬 Ollama 서버 주소 |
+| `RAG_MODEL` | 답변 생성에 쓸 로컬 Ollama 모델 |
 | `CHROMA_DIR` | 벡터 스토어 저장 경로 |
 | `RAG_TOP_K` | 검색 시 가져올 청크 수 |
 | `RAG_CHUNK_SIZE` / `RAG_CHUNK_OVERLAP` | 청킹 파라미터 |
