@@ -6,8 +6,12 @@ from dataclasses import dataclass, field
 
 from rag.loader import Document
 
-DEFAULT_CHUNK_SIZE = int(os.getenv("RAG_CHUNK_SIZE", "1000"))
-DEFAULT_CHUNK_OVERLAP = int(os.getenv("RAG_CHUNK_OVERLAP", "150"))
+def _default_chunk_size() -> int:
+    return int(os.getenv("RAG_CHUNK_SIZE", "1000"))
+
+
+def _default_chunk_overlap() -> int:
+    return int(os.getenv("RAG_CHUNK_OVERLAP", "150"))
 
 
 @dataclass
@@ -23,7 +27,10 @@ def chunk_text(text: str, chunk_size: int, chunk_overlap: int) -> list[str]:
     if chunk_size <= 0:
         raise ValueError("chunk_size must be positive")
     if chunk_overlap < 0 or chunk_overlap >= chunk_size:
-        raise ValueError("chunk_overlap must be non-negative and smaller than chunk_size")
+        raise ValueError(
+            f"chunk_overlap ({chunk_overlap}) must be non-negative and smaller than "
+            f"chunk_size ({chunk_size})"
+        )
 
     chunks = []
     start = 0
@@ -44,8 +51,8 @@ def chunk_document(
     chunk_overlap: int | None = None,
 ) -> list[Chunk]:
     """Split a single Document into Chunks."""
-    chunk_size = chunk_size if chunk_size is not None else DEFAULT_CHUNK_SIZE
-    chunk_overlap = chunk_overlap if chunk_overlap is not None else DEFAULT_CHUNK_OVERLAP
+    chunk_size = chunk_size if chunk_size is not None else _default_chunk_size()
+    chunk_overlap = chunk_overlap if chunk_overlap is not None else _default_chunk_overlap()
     pieces = chunk_text(document.content, chunk_size, chunk_overlap)
     return [
         Chunk(content=piece, source=document.source, index=i, metadata=dict(document.metadata))

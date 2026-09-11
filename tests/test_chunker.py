@@ -26,7 +26,7 @@ def test_chunk_text_rejects_non_positive_chunk_size():
 
 
 def test_chunk_text_rejects_overlap_too_large():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r"chunk_overlap \(4\).*chunk_size \(4\)"):
         chunk_text("abc", chunk_size=4, chunk_overlap=4)
 
 
@@ -51,3 +51,16 @@ def test_chunk_documents_flattens_across_documents():
 
     assert [c.source for c in chunks] == ["a.txt", "b.txt"]
     assert [c.content for c in chunks] == ["abcd", "wxyz"]
+
+
+def test_chunk_document_reads_env_defaults_at_call_time(monkeypatch):
+    document = Document(content="abcdefgh", source="note.txt", metadata={})
+
+    monkeypatch.setenv("RAG_CHUNK_SIZE", "4")
+    monkeypatch.setenv("RAG_CHUNK_OVERLAP", "0")
+    chunks = chunk_document(document)
+    assert [c.content for c in chunks] == ["abcd", "efgh"]
+
+    monkeypatch.setenv("RAG_CHUNK_SIZE", "8")
+    chunks = chunk_document(document)
+    assert [c.content for c in chunks] == ["abcdefgh"]
