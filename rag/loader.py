@@ -1,6 +1,7 @@
 """Document loading utilities for the RAG pipeline."""
 from __future__ import annotations
 
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -37,7 +38,11 @@ SUPPORTED_LOADERS = {
 
 
 def load_documents(data_dir: Path | str) -> list[Document]:
-    """Scan a directory for supported files and load them all."""
+    """Scan a directory for supported files and load them all.
+
+    A file that fails to load (e.g. wrong encoding, corrupted PDF) is skipped
+    with a warning instead of aborting the whole scan.
+    """
     data_dir = Path(data_dir)
     documents = []
     for path in sorted(data_dir.rglob("*")):
@@ -46,5 +51,8 @@ def load_documents(data_dir: Path | str) -> list[Document]:
         loader = SUPPORTED_LOADERS.get(path.suffix.lower())
         if loader is None:
             continue
-        documents.append(loader(path))
+        try:
+            documents.append(loader(path))
+        except Exception as exc:
+            print(f"Skipping {path}: {exc}", file=sys.stderr)
     return documents

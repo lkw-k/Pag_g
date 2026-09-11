@@ -43,3 +43,14 @@ def test_load_documents_scans_supported_files_only(tmp_path):
 
 def test_load_documents_empty_dir_returns_empty_list(tmp_path):
     assert load_documents(tmp_path) == []
+
+
+def test_load_documents_skips_files_that_fail_to_load(tmp_path, capsys):
+    (tmp_path / "good.txt").write_text("ok", encoding="utf-8")
+    (tmp_path / "bad.txt").write_bytes(b"\xff\xfe\x00\x01")  # invalid UTF-8
+
+    docs = load_documents(tmp_path)
+
+    assert len(docs) == 1
+    assert docs[0].content == "ok"
+    assert "bad.txt" in capsys.readouterr().err
