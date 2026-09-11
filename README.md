@@ -2,7 +2,7 @@
 
 레그(RAG) 챗봇 구현 연습.
 
-> 최종 업데이트: 2026-09-11
+> 최종 업데이트: 2026-09-12
 
 ## 기술 스택
 
@@ -19,7 +19,7 @@
 
 - [x] 프로젝트 스캐폴딩 (`rag/`, `data/`, `tests/`, 환경변수 템플릿)
 - [x] 문서 로더 — PDF/TXT 로딩, `data/` 디렉토리 스캔 (`rag/loader.py`)
-- [ ] 청킹 — `RAG_CHUNK_SIZE` / `RAG_CHUNK_OVERLAP` 기반 문서 분할
+- [x] 청킹 — `RAG_CHUNK_SIZE` / `RAG_CHUNK_OVERLAP` 기반 문서 분할 (`rag/chunker.py`)
 - [ ] 임베딩 + 벡터 스토어 색인 (ChromaDB)
 - [ ] 검색(retrieval) — `RAG_TOP_K` 기반 유사 청크 검색
 - [ ] LLM 연동 — 로컬 Ollama로 답변 생성
@@ -30,11 +30,13 @@
 ```
 Pag_g/
 ├── rag/                # RAG 챗봇 소스 패키지
-│   ├── __init__.py
-│   └── loader.py       # 문서 로더 (PDF/TXT)
+│   ├── __init__.py     # 패키지 로드 시 .env 적용
+│   ├── loader.py       # 문서 로더 (PDF/TXT)
+│   └── chunker.py      # 문서 청킹
 ├── data/               # 원본 문서 저장 위치 (git 추적 제외)
 ├── tests/              # 테스트
-│   └── test_loader.py
+│   ├── test_loader.py
+│   └── test_chunker.py
 ├── .env.example        # 환경변수 템플릿 (.env 로 복사해 사용)
 ├── requirements.txt    # 의존성
 └── README.md
