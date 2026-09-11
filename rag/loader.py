@@ -21,3 +21,30 @@ def load_pdf(path: Path | str) -> Document:
     pages = [page.extract_text() or "" for page in reader.pages]
     content = "\n".join(pages)
     return Document(content=content, source=str(path), metadata={"page_count": len(reader.pages)})
+
+
+def load_text(path: Path | str) -> Document:
+    """Load a single plain-text file."""
+    path = Path(path)
+    content = path.read_text(encoding="utf-8")
+    return Document(content=content, source=str(path), metadata={})
+
+
+SUPPORTED_LOADERS = {
+    ".pdf": load_pdf,
+    ".txt": load_text,
+}
+
+
+def load_documents(data_dir: Path | str) -> list[Document]:
+    """Scan a directory for supported files and load them all."""
+    data_dir = Path(data_dir)
+    documents = []
+    for path in sorted(data_dir.rglob("*")):
+        if not path.is_file():
+            continue
+        loader = SUPPORTED_LOADERS.get(path.suffix.lower())
+        if loader is None:
+            continue
+        documents.append(loader(path))
+    return documents
